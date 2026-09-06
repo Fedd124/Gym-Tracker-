@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#111318">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Workout Tracker">
+<title>Workout Tracker</title>
+
+<style>
+:root{
+  --bg:#0d0f12;
+  --card:#171a20;
+  --card2:#1e222a;
+  --text:#f4f5f7;
+  --muted:#9298a4;
+  --line:#2a2f38;
+  --accent:#6ea8ff;
+  --green:#63d391;
+  --danger:#ff6b6b;
+  --radius:18px;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",
+  "Segoe UI",sans-serif;
+  padding-bottom:90px;
+}
+
+button,input{
+  font:inherit;
+}
+
+button{
+  border:0;
+  cursor:pointer;
+}
+
+.app{
+  width:100%;
+  max-width:650px;
+  margin:auto;
+}
+
+header{
+  padding:25px 20px 10px;
+}
+
+.logo{
+  font-size:28px;
+  font-weight:800;
+  letter-spacing:-1px;
+}
+
+.subtitle{
+  color:var(--muted);
+  margin-top:5px;
+  font-size:14px;
+}
+
+.page{
+  display:none;
+  padding:10px 16px;
+}
+
+.page.active{
+  display:block;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:18px;
+  margin-bottom:14px;
+}
+
+.hero{
+  background:linear-gradient(145deg,#1b2638,#171a20);
+  padding:22px;
+}
+
+.hero h1{
+  margin:0 0 6px;
+  font-size:25px;
+}
+
+.hero p{
+  margin:0;
+  color:var(--muted);
+}
+
+.primary{
+  width:100%;
+  padding:15px;
+  margin-top:18px;
+  border-radius:13px;
+  background:var(--accent);
+  color:#08101d;
+  font-weight:800;
+}
+
+.secondary{
+  padding:11px 14px;
+  border-radius:11px;
+  background:var(--card2);
+  color:var(--text);
+  border:1px solid var(--line);
+}
+
+.danger{
+  color:var(--danger);
+}
+
+.section-title{
+  font-size:17px;
+  font-weight:800;
+  margin:23px 2px 10px;
+}
+
+.day{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:15px;
+  margin-bottom:8px;
+}
+
+.day-name{
+  font-weight:700;
+}
+
+.day-workout{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:3px;
+}
+
+.exercise{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:17px;
+  padding:16px;
+  margin-bottom:13px;
+}
+
+.exercise-head{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:flex-start;
+}
+
+.exercise-name{
+  font-size:17px;
+  font-weight:800;
+}
+
+.previous{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:5px;
+}
+
+.set{
+  display:grid;
+  grid-template-columns:35px 1fr 1fr 38px;
+  gap:7px;
+  align-items:center;
+  margin-top:9px;
+}
+
+.set-number{
+  color:var(--muted);
+  font-weight:700;
+  text-align:center;
+}
+
+input{
+  width:100%;
+  background:var(--card2);
+  border:1px solid var(--line);
+  color:var(--text);
+  border-radius:10px;
+  padding:11px 8px;
+  outline:none;
+}
+
+input:focus{
+  border-color:var(--accent);
+}
+
+.unit{
+  position:relative;
+}
+
+.unit span{
+  position:absolute;
+  right:9px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--muted);
+  font-size:11px;
+  pointer-events:none;
+}
+
+.set input{
+  padding-right:28px;
+}
+
+.remove-set{
+  width:35px;
+  height:35px;
+  border-radius:9px;
+  background:transparent;
+  color:var(--muted);
+}
+
+.add-set{
+  margin-top:11px;
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  background:var(--card2);
+  color:var(--accent);
+  border:1px dashed #3a4250;
+}
+
+.complete{
+  margin-top:12px;
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  background:#18251e;
+  color:var(--green);
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.stat{
+  background:var(--card2);
+  border-radius:14px;
+  padding:15px;
+}
+
+.stat-value{
+  font-size:22px;
+  font-weight:800;
+}
+
+.stat-label{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:4px;
+}
+
+.nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  height:72px;
+  background:rgba(17,19,24,.96);
+  border-top:1px solid var(--line);
+  display:flex;
+  justify-content:center;
+  z-index:50;
+}
+
+.nav-inner{
+  width:100%;
+  max-width:650px;
+  display:flex;
+}
+
+.nav button{
+  flex:1;
+  background:transparent;
+  color:var(--muted);
+  font-size:11px;
+}
+
+.nav button.active{
+  color:var(--accent);
+}
+
+.nav-icon{
+  display:block;
+  font-size:20px;
+  margin-bottom:3px;
+}
+
+.chart{
+  width:100%;
+  height:210px;
+  display:block;
+  background:var(--card2);
+  border-radius:14px;
+}
+
+select{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  background:var(--card2);
+  color:var(--text);
+  border:1px solid var(--line);
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.72);
+  display:none;
+  align-items:flex-end;
+  z-index:100;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modal-box{
+  background:var(--card);
+  width:100%;
+  max-width:650px;
+  margin:auto;
+  border-radius:22px 22px 0 0;
+  padding:20px;
+  max-height:85vh;
+  overflow:auto;
+}
+
+.modal h2{
+  margin-top:0;
+}
+
+.modal input{
+  margin-bottom:10px;
+}
+
+.row{
+  display:flex;
+  gap:8px;
+}
+
+.row>*{
+  flex:1;
+}
+
+.small{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.history-item{
+  padding:14px 0;
+  border-bottom:1px solid var(--line);
+}
+
+.history-item:last-child{
+  border-bottom:0;
+}
+
+.badge{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:8px;
+  background:#263447;
+  color:var(--accent);
+  font-size:11px;
+  font-weight:700;
+}
+
+.empty{
+  text-align:center;
+  padding:35px 15px;
+  color:var(--muted);
+}
+
+@media(min-width:650px){
+  .nav{
+    left:50%;
+    transform:translateX(-50%);
+    width:650px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+  <div class="logo">Workout Tracker</div>
+  <div class="subtitle" id="headerDate"></div>
+</header>
+
+<!-- HOME -->
+<section id="homePage" class="page active">
+
+  <div class="hero card">
+    <h1 id="todayWorkout">Today's Workout</h1>
+    <p id="todayDescription"></p>
+    <button class="primary" id="startToday">Start Workout</button>
+  </div>
+
+  <div class="section-title">Weekly Schedule</div>
+  <div id="schedule"></div>
+
+  <div class="section-title">Your Progress</div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value" id="totalSessions">0</div>
+      <div class="stat-label">Sessions</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-value" id="totalVolume">0</div>
+      <div class="stat-label">Total Volume (kg)</div>
+    </div>
+  </div>
+
+</section>
+
+<!-- WORKOUT -->
+<section id="workoutPage" class="page">
+
+  <div class="card hero">
+    <h1 id="workoutTitle"></h1>
+    <p>All working sets are recorded as failure sets.</p>
+  </div>
+
+  <div id="exerciseList"></div>
+
+  <button class="primary" onclick="finishWorkout()">Finish Workout</button>
+
+</section>
+
+<!-- PROGRESS -->
+<section id="progressPage" class="page">
+
+  <div class="card">
+    <h2>Progress</h2>
+    <p class="small">Choose an exercise to see your progression.</p>
+
+    <select id="progressExercise" onchange="drawProgress()"></select>
+  </div>
+
+  <div class="card">
+    <canvas id="progressChart" class="chart"></canvas>
+  </div>
+
+  <div id="progressStats"></div>
+
+</section>
+
+<!-- HISTORY -->
+<section id="historyPage" class="page">
+
+  <div class="card">
+    <h2>Workout History</h2>
+    <div id="historyList"></div>
+  </div>
+
+</section>
+
+<!-- SETTINGS -->
+<section id="settingsPage" class="page">
+
+  <div class="card">
+    <h2>Workout Setup</h2>
+    <p class="small">
+      Add or remove exercises from your workouts.
+    </p>
+
+    <div id="settingsWorkouts"></div>
+  </div>
+
+  <div class="card">
+    <h2>Data</h2>
+
+    <button class="secondary" onclick="exportData()">
+      Export Workout Data
+    </button>
+
+    <button class="secondary" onclick="resetData()" style="margin-left:6px">
+      Reset
+    </button>
+  </div>
+
+</section>
+
+</div>
+
+<!-- NAVIGATION -->
+<nav class="nav">
+  <div class="nav-inner">
+
+    <button onclick="showPage('homePage',this)" class="active">
+      <span class="nav-icon">⌂</span>
+      Home
+    </button>
+
+    <button onclick="showPage('workoutPage',this)">
+      <span class="nav-icon">🏋️</span>
+      Workout
+    </button>
+
+    <button onclick="showPage('progressPage',this)">
+      <span class="nav-icon">📈</span>
+      Progress
+    </button>
+
+    <button onclick="showPage('historyPage',this)">
+      <span class="nav-icon">🗓️</span>
+      History
+    </button>
+
+    <button onclick="showPage('settingsPage',this)">
+      <span class="nav-icon">⚙️</span>
+      Edit
+    </button>
+
+  </div>
+</nav>
+
+<!-- ADD EXERCISE MODAL -->
+<div class="modal" id="exerciseModal">
+  <div class="modal-box">
+
+    <h2>Add Exercise</h2>
+
+    <input id="newExerciseName" placeholder="Exercise name">
+
+    <div class="row">
+      <button class="primary" onclick="saveNewExercise()">
+        Add
+      </button>
+
+      <button class="secondary" onclick="closeModal()">
+        Cancel
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+
+/* =========================================================
+   DEFAULT WORKOUT DATA
+========================================================= */
+
+const defaultWorkouts = {
+
+  "Arms + Shoulders": [
+    "Leon Kahara Press",
+    "Preacher Curl",
+    "Cable Lateral Raise",
+    "Incline Seated Curl",
+    "Rear Delt Fly",
+    "Triceps Overhead Extension",
+    "Sullen Curl"
+  ],
+
+  "Chest + Back": [
+    "Wide Grip Seated Row",
+    "Incline Chest Press (Plate Loaded)",
+    "Close Grip Row",
+    "Leg Dec",
+    "Lat Pulldown"
+  ],
+
+  "Legs": []
+};
+
+/* =========================================================
+   APP STATE
+========================================================= */
+
+let workouts =
+  JSON.parse(localStorage.getItem("workouts")) ||
+  defaultWorkouts;
+
+let sessions =
+  JSON.parse(localStorage.getItem("sessions")) || [];
+
+let currentWorkout = null;
+let currentWorkoutData = [];
+
+/* =========================================================
+   WEEKLY SCHEDULE
+========================================================= */
+
+const schedule = {
+  1: null,
+  2: "Arms + Shoulders",
+  3: null,
+  4: "Chest + Back",
+  5: "Arms + Shoulders",
+  6: "Legs",
+  0: "Chest + Back"
+};
+
+const dayNames = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday"
+];
+
+/* =========================================================
+   INITIALISE
+========================================================= */
+
+function init(){
+
+  const now = new Date();
+
+  document.getElementById("headerDate").textContent =
+    now.toLocaleDateString(undefined,{
+      weekday:"long",
+      day:"numeric",
+      month:"long"
+    });
+
+  renderSchedule();
+  updateDashboard();
+  populateProgressExercises();
+  renderHistory();
+  renderSettings();
+
+}
+
+init();
+
+/* =========================================================
+   PAGE NAVIGATION
+========================================================= */
+
+function showPage(pageId,button){
+
+  document.querySelectorAll(".page")
+    .forEach(p=>p.classList.remove("active"));
+
+  document.getElementById(pageId)
+    .classList.add("active");
+
+  document.querySelectorAll(".nav button")
+    .forEach(b=>b.classList.remove("active"));
+
+  if(button) button.classList.add("active");
+
+  if(pageId==="progressPage"){
+    populateProgressExercises();
+    drawProgress();
+  }
+
+  if(pageId==="historyPage"){
+    renderHistory();
+  }
+
+}
+
+/* =========================================================
+   TODAY
+========================================================= */
+
+function updateDashboard(){
+
+  const day = new Date().getDay();
+  const workout = schedule[day];
+
+  if(!workout){
+
+    document.getElementById("todayWorkout").textContent =
+      "Rest Day 😴";
+
+    document.getElementById("todayDescription").textContent =
+      "Recovery day. No workout scheduled.";
+
+    document.getElementById("startToday").style.display="none";
+
+  }else{
+
+    document.getElementById("todayWorkout").textContent =
+      workout;
+
+    document.getElementById("todayDescription").textContent =
+      workout==="Legs"
+      ? "Optional leg session"
+      : "Scheduled workout";
+
+    document.getElementById("startToday").style.display="block";
+
+    document.getElementById("startToday").onclick =
+      ()=>startWorkout(workout);
+  }
+
+  document.getElementById("totalSessions").textContent =
+    sessions.length;
+
+  const volume = sessions.reduce(
+    (sum,s)=>sum+(s.volume||0),0
+  );
+
+  document.getElementById("totalVolume").textContent =
+    Math.round(volume).toLocaleString();
+}
+
+/* =========================================================
+   SCHEDULE
+========================================================= */
+
+function renderSchedule(){
+
+  const container =
+    document.getElementById("schedule");
+
+  container.innerHTML="";
+
+  for(let i=1;i<=7;i++){
+
+    const workout =
+      schedule[i%7];
+
+    const div =
+      document.createElement("div");
+
+    div.className="day";
+
+    const name =
+      dayNames[i%7];
+
+    div.innerHTML=`
+      <div>
+        <div class="day-name">${name}</div>
+        <div class="day-workout">
+          ${workout || "Rest"}
+        </div>
+      </div>
+      ${
+        workout
+        ? `<button class="secondary"
+            onclick="startWorkout('${workout}')">
+            Start
+           </button>`
+        : ""
+      }
+    `;
+
+    container.appendChild(div);
+  }
+
+}
+
+/* =========================================================
+   START WORKOUT
+========================================================= */
+
+function startWorkout(name){
+
+  if(!workouts[name]){
+    alert("This workout doesn't exist.");
+    return;
+  }
+
+  currentWorkout=name;
+
+  currentWorkoutData =
+    workouts[name].map(exercise=>({
+
+      name:exercise,
+
+      sets:[
+        {weight:"",reps:""},
+        {weight:"",reps:""}
+      ]
+
+    }));
+
+  renderWorkout();
+
+  showPage("workoutPage",
+    document.querySelectorAll(".nav button")[1]
+  );
+
+}
+
+/* =========================================================
+   PREVIOUS PERFORMANCE
+========================================================= */
+
+function getPrevious(exercise){
+
+  for(let i=sessions.length-1;i>=0;i--){
+
+    const session=sessions[i];
+
+    const found=session.exercises.find(
+      e=>e.name===exercise
+    );
+
+    if(found) return found;
+
+  }
+
+  return null;
+}
+
+/* =========================================================
+   RENDER WORKOUT
+========================================================= */
+
+function renderWorkout(){
+
+  document.getElementById("workoutTitle")
+    .textContent=currentWorkout;
+
+  const container =
+    document.getElementById("exerciseList");
+
+  container.innerHTML="";
+
+  currentWorkoutData.forEach((exercise,index)=>{
+
+    const previous =
+      getPrevious(exercise.name);
+
+    const div =
+      document.createElement("div");
+
+    div.className="exercise";
+
+    let html=`
+
+      <div class="exercise-head">
+
+        <div>
+          <div class="exercise-name">
+            ${exercise.name}
+          </div>
+
+          ${
+            previous
+            ? `<div class="previous">
+                Previous: ${formatSets(previous.sets)}
+               </div>`
+            : `<div class="previous">
+                No previous session
+               </div>`
+          }
+
+        </div>
+
+        <span class="badge">FAILURE</span>
+
+      </div>
+    `;
+
+    exercise.sets.forEach((set,setIndex)=>{
+
+      html+=`
+
+        <div class="set">
+
+          <div class="set-number">
+            ${setIndex+1}
+          </div>
+
+          <div class="unit">
+            <input
+              type="number"
+              inputmode="decimal"
+              placeholder="Weight"
+              value="${set.weight}"
+              onchange="updateSet(${index},${setIndex},'weight',this.value)"
+            >
+            <span>kg</span>
+          </div>
+
+          <div class="unit">
+            <input
+              type="number"
+              inputmode="numeric"
+              placeholder="Reps"
+              value="${set.reps}"
+              onchange="updateSet(${index},${setIndex},'reps',this.value)"
+            >
+            <span>reps</span>
+          </div>
+
+          <button
+            class="remove-set"
+            onclick="removeSet(${index},${setIndex})">
+            ×
+          </button>
+
+        </div>
+      `;
+    });
+
+    html+=`
+
+      <button
+        class="add-set"
+        onclick="addSet(${index})">
+        + Add Set
+      </button>
+
+      <button
+        class="complete"
+        onclick="this.textContent =
+          this.textContent.includes('✓')
+          ? 'Mark Complete'
+          : '✓ Complete'">
+        Mark Complete
+      </button>
+
+    `;
+
+    div.innerHTML=html;
+
+    container.appendChild(div);
+
+  });
+
+}
+
+/* =========================================================
+   SET MANAGEMENT
+========================================================= */
+
+function updateSet(exercise,set,key,value){
+
+  currentWorkoutData[exercise]
+    .sets[set][key]=value;
+
+}
+
+function addSet(exercise){
+
+  currentWorkoutData[exercise]
+    .sets.push({
+      weight:"",
+      reps:""
+    });
+
+  renderWorkout();
+
+}
+
+function removeSet(exercise,set){
+
+  if(
+    currentWorkoutData[exercise].sets.length<=1
+  ) return;
+
+  currentWorkoutData[exercise]
+    .sets.splice(set,1);
+
+  renderWorkout();
+
+}
+
+/* =========================================================
+   FINISH WORKOUT
+========================================================= */
+
+function finishWorkout(){
+
+  let volume=0;
+
+  currentWorkoutData.forEach(exercise=>{
+
+    exercise.sets.forEach(set=>{
+
+      const weight=parseFloat(set.weight)||0;
+      const reps=parseFloat(set.reps)||0;
+
+      volume += weight*reps;
+
+    });
+
+  });
+
+  const session={
+
+    id:Date.now(),
+
+    date:new Date().toISOString(),
+
+    workout:currentWorkout,
+
+    volume,
+
+    exercises:
+      JSON.parse(JSON.stringify(currentWorkoutData))
+
+  };
+
+  sessions.push(session);
+
+  localStorage.setItem(
+    "sessions",
+    JSON.stringify(sessions)
+  );
+
+  alert(
+    `Workout complete! 💪\n\n`+
+    `Volume: ${Math.round(volume).toLocaleString()} kg`
+  );
+
+  currentWorkout=null;
+  currentWorkoutData=[];
+
+  updateDashboard();
+
+  showPage(
+    "homePage",
+    document.querySelectorAll(".nav button")[0]
+  );
+
+}
+
+/* =========================================================
+   FORMAT SETS
+========================================================= */
+
+function formatSets(sets){
+
+  return sets
+    .filter(s=>s.weight!=="" || s.reps!=="")
+    .map(
+      s=>`${s.weight||"-"} kg × ${s.reps||"-"}`
+    )
+    .join(" | ");
+
+}
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+function populateProgressExercises(){
+
+  const select =
+    document.getElementById("progressExercise");
+
+  const names=[];
+
+  Object.values(workouts)
+    .flat()
+    .forEach(name=>{
+      if(!names.includes(name))
+        names.push(name);
+    });
+
+  select.innerHTML="";
+
+  names.forEach(name=>{
+
+    const option=
+      document.createElement("option");
+
+    option.value=name;
+    option.textContent=name;
+
+    select.appendChild(option);
+
+  });
+
+}
+
+function getExerciseHistory(name){
+
+  return sessions
+    .map(session=>{
+
+      const exercise =
+        session.exercises.find(
+          e=>e.name===name
+        );
+
+      if(!exercise) return null;
+
+      const valid =
+        exercise.sets.filter(
+          s=>s.weight!=="" && s.reps!==""
+        );
+
+      if(!valid.length) return null;
+
+      const maxWeight =
+        Math.max(
+          ...valid.map(
+            s=>parseFloat(s.weight)
+          )
+        );
+
+      const volume =
+        valid.reduce(
+          (sum,s)=>
+            sum+
+            (parseFloat(s.weight)||0)*
+            (parseFloat(s.reps)||0),
+          0
+        );
+
+      return{
+        date:new Date(session.date),
+        maxWeight,
+        volume
+      };
+
+    })
+    .filter(Boolean);
+
+}
+
+function drawProgress(){
+
+  const select =
+    document.getElementById("progressExercise");
+
+  if(!select.options.length) return;
+
+  const name=select.value;
+
+  const data=
+    getExerciseHistory(name);
+
+  const canvas=
+    document.getElementById("progressChart");
+
+  const ctx=canvas.getContext("2d");
+
+  const dpr=window.devicePixelRatio||1;
+
+  const width=canvas.clientWidth;
+  const height=canvas.clientHeight;
+
+  canvas.width=width*dpr;
+  canvas.height=height*dpr;
+
+  ctx.scale(dpr,dpr);
+
+  ctx.clearRect(0,0,width,height);
+
+  if(data.length===0){
+
+    ctx.fillStyle="#9298a4";
+    ctx.font="14px -apple-system";
+    ctx.textAlign="center";
+
+    ctx.fillText(
+      "Complete a workout to see progress",
+      width/2,
+      height/2
+    );
+
+    document.getElementById(
+      "progressStats"
+    ).innerHTML="";
+
+    return;
+  }
+
+  const padding=30;
+
+  const values=data.map(
+    d=>d.maxWeight
+  );
+
+  const min=Math.min(...values);
+  const max=Math.max(...values);
+
+  const range=(max-min)||1;
+
+  ctx.strokeStyle="#303640";
+  ctx.lineWidth=1;
+
+  for(let i=0;i<4;i++){
+
+    const y=
+      padding+
+      i*(height-padding*2)/3;
+
+    ctx.beginPath();
+    ctx.moveTo(padding,y);
+    ctx.lineTo(width-padding,y);
+    ctx.stroke();
+
+  }
+
+  ctx.strokeStyle="#6ea8ff";
+  ctx.lineWidth=3;
+  ctx.lineJoin="round";
+  ctx.lineCap="round";
+
+  ctx.beginPath();
+
+  data.forEach((item,i)=>{
+
+    const x=
+      padding+
+      i*(width-padding*2)/
+      Math.max(data.length-1,1);
+
+    const y=
+      height-padding-
+      ((item.maxWeight-min)/range)*
+      (height-padding*2);
+
+    if(i===0)
+      ctx.moveTo(x,y);
+    else
+      ctx.lineTo(x,y);
+
+  });
+
+  ctx.stroke();
+
+  data.forEach((item,i)=>{
+
+    const x=
+      padding+
+      i*(width-padding*2)/
+      Math.max(data.length-1,1);
+
+    const y=
+      height-padding-
+      ((item.maxWeight-min)/range)*
+      (height-padding*2);
+
+    ctx.fillStyle="#6ea8ff";
+
+    ctx.beginPath();
+    ctx.arc(x,y,5,0,Math.PI*2);
+    ctx.fill();
+
+  });
+
+  const best=Math.max(...values);
+
+  const latest=values[values.length-1];
+
+  const first=values[0];
+
+  const change=latest-first;
+
+  document.getElementById(
+    "progressStats"
+  ).innerHTML=`
+
+    <div class="stats">
+
+      <div class="stat">
+        <div class="stat-value">${latest} kg</div>
+        <div class="stat-label">
+          Latest
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-value">${best} kg</div>
+        <div class="stat-label">
+          Best Weight
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-value">
+          ${change>0?"+":""}${change} kg
+        </div>
+        <div class="stat-label">
+          Since First Session
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-value">
+          ${data.length}
+        </div>
+        <div class="stat-label">
+          Sessions
+        </div>
+      </div>
+
+    </div>
+  `;
+
+}
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+function renderHistory(){
+
+  const container=
+    document.getElementById("historyList");
+
+  if(!sessions.length){
+
+    container.innerHTML=
+      `<div class="empty">
+        No workouts recorded yet.
+      </div>`;
+
+    return;
+  }
+
+  container.innerHTML="";
+
+  [...sessions]
+    .reverse()
+    .forEach(session=>{
+
+      const date=
+        new Date(session.date)
+        .toLocaleDateString(
+          undefined,
+          {
+            weekday:"short",
+            day:"numeric",
+            month:"short",
+            year:"numeric"
+          }
+        );
+
+      const div=
+        document.createElement("div");
+
+      div.className="history-item";
+
+      div.innerHTML=`
+
+        <strong>${session.workout}</strong>
+
+        <div class="small">
+          ${date}
+        </div>
+
+        <div class="small" style="margin-top:6px">
+          ${session.exercises.length}
+          exercises ·
+          ${session.exercises.reduce(
+            (sum,e)=>sum+e.sets.length,0
+          )}
+          sets ·
+          ${Math.round(session.volume)}
+          kg volume
+        </div>
+
+      `;
+
+      container.appendChild(div);
+
+    });
+
+}
+
+/* =========================================================
+   SETTINGS / EDIT WORKOUTS
+========================================================= */
+
+function renderSettings(){
+
+  const container=
+    document.getElementById("settingsWorkouts");
+
+  container.innerHTML="";
+
+  Object.keys(workouts)
+    .forEach(workout=>{
+
+      const card=
+        document.createElement("div");
+
+      card.className="card";
+
+      let html=`
+        <h3>${workout}</h3>
+      `;
+
+      workouts[workout]
+        .forEach((exercise,index)=>{
+
+          html+=`
+
+            <div class="day">
+
+              <div>
+                ${exercise}
+              </div>
+
+              <button
+                class="secondary danger"
+                onclick="deleteExercise('${workout}',${index})">
+                Delete
+              </button>
+
+            </div>
+
+          `;
+
+        });
+
+      html+=`
+
+        <button
+          class="secondary"
+          onclick="openAddExercise('${workout}')">
+          + Add Exercise
+        </button>
+
+      `;
+
+      card.innerHTML=html;
+
+      container.appendChild(card);
+
+    });
+
+}
+
+let exerciseTarget=null;
+
+function openAddExercise(workout){
+
+  exerciseTarget=workout;
+
+  document
+    .getElementById("newExerciseName")
+    .value="";
+
+  document
+    .getElementById("exerciseModal")
+    .classList.add("show");
+
+}
+
+function closeModal(){
+
+  document
+    .getElementById("exerciseModal")
+    .classList.remove("show");
+
+}
+
+function saveNewExercise(){
+
+  const input=
+    document.getElementById(
+      "newExerciseName"
+    );
+
+  const name=input.value.trim();
+
+  if(!name) return;
+
+  workouts[exerciseTarget].push(name);
+
+  localStorage.setItem(
+    "workouts",
+    JSON.stringify(workouts)
+  );
+
+  closeModal();
+
+  renderSettings();
+  populateProgressExercises();
+
+}
+
+function deleteExercise(workout,index){
+
+  if(!confirm(
+    "Remove this exercise from the workout?"
+  )) return;
+
+  workouts[workout].splice(index,1);
+
+  localStorage.setItem(
+    "workouts",
+    JSON.stringify(workouts)
+  );
+
+  renderSettings();
+  populateProgressExercises();
+
+}
+
+/* =========================================================
+   EXPORT
+========================================================= */
+
+function exportData(){
+
+  const data={
+    workouts,
+    sessions
+  };
+
+  const blob=
+    new Blob(
+      [JSON.stringify(data,null,2)],
+      {type:"application/json"}
+    );
+
+  const url=
+    URL.createObjectURL(blob);
+
+  const a=
+    document.createElement("a");
+
+  a.href=url;
+  a.download=
+    "workout-tracker-backup.json";
+
+  a.click();
+
+  URL.revokeObjectURL(url);
+
+}
+
+/* =========================================================
+   RESET
+========================================================= */
+
+function resetData(){
+
+  if(!confirm(
+    "This will delete your workout history. Continue?"
+  )) return;
+
+  localStorage.removeItem("sessions");
+  localStorage.removeItem("workouts");
+
+  sessions=[];
+  workouts=
+    JSON.parse(JSON.stringify(defaultWorkouts));
+
+  updateDashboard();
+  renderHistory();
+  renderSettings();
+  populateProgressExercises();
+
+}
+
+/* =========================================================
+   RESIZE CHART
+========================================================= */
+
+window.addEventListener(
+  "resize",
+  drawProgress
+);
+
+</script>
+
+</body>
+</html>
